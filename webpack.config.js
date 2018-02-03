@@ -15,7 +15,10 @@ const DEV_MODE = process.env.NODE_ENV !== 'production'
 if (DEV_MODE) {
   plugins.push(
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.LoaderOptionsPlugin({
+       debug: true
+    })
   )
 } else {
   plugins.push(
@@ -33,30 +36,40 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['react-hot-loader', 'babel-loader']
+        use: ['babel-loader']
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: ['babel-loader', 'eslint-loader']
+      },
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
       }
     ]  
   },
   entry: [
-    'webpack-dev-server/client?http://localhost:3001',
+    'webpack-dev-server/client?http://0.0.0.0:3001',
     'webpack/hot/only-dev-server',
-    './demo/app'
+    path.resolve(__dirname, 'demo', 'app.js')
   ],
-  cache: DEV_MODE,
-  debug: DEV_MODE,
   watch: DEV_MODE,
-  devtool: DEV_MODE ? '#inline-source-map' : false,
+  devtool: DEV_MODE ? 'inline-source-map' : 'source-map',
   output: {
     path: path.join(__dirname, 'demo'),
-    filename: 'bundle.js'
+    publicPath: '/',
+    filename: 'js/bundle.js'
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'demo'),
+    publicPath: '/',
+    compress: true,
+    hot: true,
+    historyApiFallback: true
   },
   plugins: plugins,
   resolve: {
-    extensions: ['', '.js']
+    extensions: ['*', '.js', '.jsx']
   }
 }
