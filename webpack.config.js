@@ -21,8 +21,7 @@ if (DEV_MODE) {
   plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
-        screw_ie8: true,
-        warnings: false,
+        warnings: false
       }
     })
   )
